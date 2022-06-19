@@ -39,6 +39,7 @@ export default defineConfig({
   ],
   server: {
     force: true,
+    open: true,
   },
   optimizeDeps: {
     // 自定义预构建入口，默认就是 index.html

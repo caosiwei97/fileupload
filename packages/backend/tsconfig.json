@@ -2,6 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
-    "baseUrl": "./"
-  }
+    "baseUrl": "./",
+    "outDir": "../../dist/backend"
+  },
+  "include": ["*.ts", ".eslintrc.js", "src"]
 }

@@ -7,91 +7,36 @@
     text-color="#fff"
     router
   >
+    <el-sub-menu index="/">
+      <template #title>
+        <span>单一文件</span>
+      </template>
+      <el-menu-item index="/">
+        <template #title> FORM-DATA </template>
+      </el-menu-item>
+      <el-menu-item index="/">
+        <template #title> BASE64 </template>
+      </el-menu-item>
+      <el-menu-item index="/">
+        <template #title> 缩略图 </template>
+      </el-menu-item>
+      <el-menu-item index="/">
+        <template #title> 进度管控 </template>
+      </el-menu-item>
+    </el-sub-menu>
     <el-menu-item index="/">
-      <el-icon><home-filled /> </el-icon>
-      <template #title> 首页 </template>
+      <template #title> 多文件 </template>
     </el-menu-item>
-    <el-sub-menu index="1">
-      <template #title>
-        <el-icon><goods-filled /> </el-icon>
-        <span>商品</span>
-      </template>
-      <el-menu-item index="/product/product_list">
-        <template #title> 商品列表 </template>
-      </el-menu-item>
-      <el-menu-item index="/product/product_classify">
-        <template #title> 商品分类 </template>
-      </el-menu-item>
-      <el-menu-item index="/product/product_attr">
-        <template #title> 商品规格 </template>
-      </el-menu-item>
-      <el-menu-item index="/product/product_reply">
-        <template #title> 商品评论 </template>
-      </el-menu-item>
-    </el-sub-menu>
-    <el-sub-menu index="2">
-      <template #title>
-        <el-icon><shopping-cart /></el-icon>
-        <span>订单</span>
-      </template>
-      <el-menu-item index="2-1">
-        <i class="el-icon-menu" />
-        <template #title> 订单管理 </template>
-      </el-menu-item>
-      <el-menu-item index="2-2">
-        <i class="el-icon-menu" />
-        <template #title> 收银订单 </template>
-      </el-menu-item>
-    </el-sub-menu>
-    <el-sub-menu index="3">
-      <template #title>
-        <el-icon><promotion /></el-icon>
-        <span>营销</span>
-      </template>
-    </el-sub-menu>
-    <el-sub-menu index="4">
-      <template #title>
-        <el-icon><setting /></el-icon>
-        <span>设置</span>
-      </template>
-      <el-sub-menu index="/setting/permission">
-        <template #title>
-          <i class="el-icon-location" />
-          <span>权限管理</span>
-        </template>
-        <el-menu-item index="/setting/permission/admin">
-          <i class="el-icon-menu" />
-          <template #title> 管理员 </template>
-        </el-menu-item>
-        <el-menu-item index="/setting/permission/role">
-          <i class="el-icon-menu" />
-          <template #title> 角色 </template>
-        </el-menu-item>
-        <el-menu-item index="/setting/permission/rule">
-          <i class="el-icon-menu" />
-          <template #title> 规则 </template>
-        </el-menu-item>
-      </el-sub-menu>
-    </el-sub-menu>
-    <el-sub-menu index="5">
-      <template #title>
-        <el-icon><Location /></el-icon>
-        <span>维护</span>
-      </template>
-    </el-sub-menu>
+    <el-menu-item index="/">
+      <template #title> 拖拽上传 </template>
+    </el-menu-item>
+    <el-menu-item index="/">
+      <template #title> 大文件上传 </template>
+    </el-menu-item>
   </el-menu>
 </template>
 
-<script lang="ts" setup>
-  import {
-    Location,
-    Setting,
-    HomeFilled,
-    GoodsFilled,
-    ShoppingCart,
-    Promotion,
-  } from '@element-plus/icons-vue'
-</script>
+<script lang="ts" setup></script>
 
 <style lang="scss" scoped>
   .el-menu {

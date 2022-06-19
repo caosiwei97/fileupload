@@ -3,7 +3,6 @@ import { App, Component } from 'vue'
 export default {
   install(app: App) {
     const modules = import.meta.globEager('../components/**/*.vue')
-    console.log(modules)
 
     for (const path in modules) {
       const comp = modules[path].default as Component

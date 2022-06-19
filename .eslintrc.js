@@ -7,6 +7,11 @@ module.exports = {
     es2021: true,
     node: true,
   },
+  parserOptions: {
+    ecmaVersion: 12,
+    sourceType: 'module',
+  },
+
   // 配置规则
   extends: ['plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
   rules: {
