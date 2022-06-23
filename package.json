@@ -9,6 +9,7 @@
     "commitlint": "commitlint -e -V",
     "web:dev": "pnpm --filter @nice/frontend dev",
     "api:dev": "pnpm --filter @nice/backend dev",
+    "test": "pnpm --filter @nice/frontend test",
     "lint": "pnpm lint:web",
     "lint:web": "pnpm --filter @nice/frontend lint",
     "lint:node": "pnpm --filter @nice/backend lint",
