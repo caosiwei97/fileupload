@@ -36,8 +36,8 @@ export interface AxiosResponse {
 export type AxiosPromise = Promise<AxiosResponse>
 
 export interface AxiosError extends Error {
-  config: AxiosRequestConfig;
-  code?: string | null | number;
-  request?: any;
-  response?: AxiosResponse;
+  config: AxiosRequestConfig
+  code?: string | null | number
+  request?: any
+  response?: AxiosResponse
 }

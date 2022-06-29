@@ -2,16 +2,19 @@ import { AxiosPromise, AxiosRequestConfig } from '../types'
 import { AxiosResponse } from '../types/index'
 import { transformResponse } from './helpers/data'
 import { parseHeaders } from './helpers/headers'
-import { AxiosError } from "./helpers/error";
+import { createError } from './helpers/error'
 
 export default function xhr(config: AxiosRequestConfig): AxiosPromise {
   return new Promise((resolve, reject) => {
-    const { url, method = 'get', data = null, headers, responseType, timeout } = config
+    const {
+      url,
+      method = 'get',
+      data = null,
+      headers,
+      responseType,
+      timeout,
+    } = config
     const request = new XMLHttpRequest()
-
-    if (timeout) {
-      request.timeout = timeout;
-    }
 
     request.open(method.toUpperCase(), url)
 
@@ -29,22 +32,23 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       request.responseType = responseType
     }
 
+    if (timeout) {
+      request.timeout = timeout
+    }
+
     // 发送数据
     request.send(data)
 
     // 监听事件
     request.onreadystatechange = function handleLoad() {
-      if (request.readyState !== 4) {
-        return
-      }
-
-      // 断网
-      if (request.status === 0) {
+      if (request.readyState !== 4 || request.status === 0) {
         return
       }
 
       const responseData =
-        responseType && responseType !== 'text' ? request.response : request.responseText
+        responseType && responseType !== 'text'
+          ? request.response
+          : request.responseText
 
       const response: AxiosResponse = {
         data: transformResponse(responseData),
@@ -59,28 +63,36 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
 
       function handleResponse(response: AxiosResponse): void {
         if (response.status >= 200 && response.status < 300) {
-          resolve(response);
+          resolve(response)
         } else {
-          reject(createError(
-            `Request failed with status code ${response.status}`,
-            config,
-            null,
-            request.status,
-            response
-          ));
+          reject(
+            createError(
+              `Request failed with status code ${response.status}`,
+              config,
+              null,
+              request.status,
+              response,
+            ),
+          )
         }
       }
     }
 
     // 监听网络错误事件
     request.onerror = function () {
-      reject(createError("Net Error", config, null, request));
-    };
+      reject(createError('Net Error', config, null, request))
+    }
 
     // 监听超时事件
     request.ontimeout = function () {
-      reject(createError(`Timeout of ${timeout} ms exceeded`, config, "TIMEOUT", request));
+      reject(
+        createError(
+          `Timeout of ${timeout} ms exceeded`,
+          config,
+          'TIMEOUT',
+          request,
+        ),
+      )
     }
   })
 }
-

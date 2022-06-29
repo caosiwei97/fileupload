@@ -6,6 +6,7 @@ import { processHeaders } from './helpers/headers'
 
 function axios(config: AxiosRequestConfig) {
   processConfig(config)
+
   return xhr(config)
 }
 
@@ -13,7 +14,11 @@ function axios(config: AxiosRequestConfig) {
 function processConfig(config: AxiosRequestConfig) {
   // 对 URL 进行处理
   config.url = transformURL(config)
+
+  // 处理请求头
   config.headers = transformHeaders(config)
+
+  // 处理请求数据
   config.data = transformRequestData(config)
 }
 

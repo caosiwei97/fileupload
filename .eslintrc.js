@@ -13,7 +13,10 @@ module.exports = {
   },
 
   // 配置规则
-  extends: ['plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
+  extends: [
+    'plugin:@typescript-eslint/recommended',
+    'plugin:prettier/recommended',
+  ],
   rules: {
     'prettier/prettier': 'error', // 不符合prettier格式化规则的都标记为错误
     '@typescript-eslint/no-empty-function': 'off',

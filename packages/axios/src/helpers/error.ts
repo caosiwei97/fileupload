@@ -1,26 +1,26 @@
-import { AxiosRequestConfig, AxiosResponse } from "../types";
+import { AxiosRequestConfig, AxiosResponse } from '../../types/index'
 
 export class AxiosError extends Error {
-  private config: AxiosRequestConfig;
-  private request?: any;
-  private code?: string | null | number;
-  private response?: AxiosResponse;
+  private config: AxiosRequestConfig
+  private request?: any
+  private code?: string | null | number
+  private response?: AxiosResponse
 
   constructor(
     message: string,
     config: AxiosRequestConfig,
     request?: any,
     code?: string | null | number,
-    response?: AxiosResponse
+    response?: AxiosResponse,
   ) {
-    super(message);
+    super(message)
 
-    this.config = config;
-    this.request = request;
-    this.code = code;
-    this.response = response;
+    this.config = config
+    this.request = request
+    this.code = code
+    this.response = response
 
-    Object.setPrototypeOf(this, AxiosError.prototype);
+    Object.setPrototypeOf(this, AxiosError.prototype)
   }
 }
 
@@ -29,8 +29,7 @@ export function createError(
   config: AxiosRequestConfig,
   code: string | null | number,
   request?: any,
-  response?: AxiosResponse
+  response?: AxiosResponse,
 ) {
-  const error = new AxiosError(message, config, code, request, response);
-  return error;
+  return new AxiosError(message, config, code, request, response)
 }

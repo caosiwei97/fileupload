@@ -1,7 +1,11 @@
 <template>
   <h2>单一文件上传 FormData</h2>
   <el-row class="singlefile-upload-formdata" justify="center">
-    <input class="singlefile-upload-formdata__file-btn" type="file" ref="file" />
+    <input
+      class="singlefile-upload-formdata__file-btn"
+      type="file"
+      ref="file"
+    />
     <el-col :gutter="10">
       <my-button type="primary" :icon="CirclePlusFilled">选择文件</my-button>
       <my-button type="success" :icon="UploadFilled">上传服务器</my-button>
@@ -18,16 +22,21 @@
   import axios from '@nice/axios'
 
   onMounted(async () => {
-    const data = await axios({
-      url: 'http://localhost:3001/api/base',
-      method: 'post',
-      data: {
-        a: 1,
-        b: 2,
-      },
-    })
+    try {
+      const data = await axios({
+        url: 'http://localhost:3001/api/base',
+        method: 'post',
+        data: {
+          a: 1,
+          b: 2,
+        },
+        timeout: 3000,
+      })
 
-    console.log(data)
+      console.log(data)
+    } catch (error) {
+      console.dir(error)
+    }
   })
 
   const props = defineProps({
