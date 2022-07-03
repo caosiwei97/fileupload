@@ -23,14 +23,10 @@
 
   onMounted(async () => {
     try {
-      const data = await axios({
-        url: 'http://localhost:3001/api/base',
-        method: 'post',
-        data: {
-          a: 1,
-          b: 2,
-        },
-        timeout: 3000,
+      console.dir(axios)
+      const data = await axios.post('http://localhost:3001/api/base', {
+        a: 1,
+        b: 2,
       })
 
       console.log(data)

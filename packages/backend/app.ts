@@ -27,9 +27,7 @@ router.get('/api/base', function (req: any, res: any) {
 })
 
 router.post('/api/base', function (req: any, res: any) {
-  setTimeout(() => {
-    res.json(req.body)
-  }, 3000)
+  res.json(req.body)
 })
 
 app.use(router)

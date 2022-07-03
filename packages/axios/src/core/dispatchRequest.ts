@@ -1,8 +1,8 @@
-import type { AxiosRequestConfig } from '../types'
-import { buildURL } from './helpers/url'
+import type { AxiosRequestConfig } from '../../types'
+import { buildURL } from '../helpers/url'
 import xhr from './xhr'
-import { transformRequest } from './helpers/data'
-import { processHeaders } from './helpers/headers'
+import { transformRequest } from '../helpers/data'
+import { processHeaders } from '../helpers/headers'
 
 function axios(config: AxiosRequestConfig) {
   processConfig(config)
