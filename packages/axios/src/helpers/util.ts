@@ -12,9 +12,8 @@ export function extend<T, U extends Record<string, any>>(
   to: T,
   from: U,
 ): T & U {
-  // TODO: TS 类型报错
   Object.getOwnPropertyNames(from).forEach((key) => {
-    ;(to as T & U)[key] = from[key]
+    to[key as keyof typeof to] = from[key]
   })
 
   return to as T & U
