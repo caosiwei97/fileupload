@@ -29,7 +29,12 @@
         b: 2,
       })
 
+      const data2 = await axios('http://localhost:3001/api/base', {
+        method: 'post',
+      })
+
       console.log(data)
+      console.log(data2)
     } catch (error) {
       console.dir(error)
     }
