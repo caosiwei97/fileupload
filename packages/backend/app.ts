@@ -22,8 +22,11 @@ app.all('*', function (req, res, next) {
   else next()
 })
 
-router.get('/api/base', function (req: any, res: any) {
-  res.json(req.query)
+router.get('/api/user', function (req: any, res: any) {
+  res.json({
+    username: 'admin',
+    age: 18,
+  })
 })
 
 router.post('/api/base', function (req: any, res: any) {

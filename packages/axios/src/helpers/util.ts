@@ -13,7 +13,7 @@ export function extend<T, U extends Record<string, any>>(
   from: U,
 ): T & U {
   Object.getOwnPropertyNames(from).forEach((key) => {
-    to[key as keyof typeof to] = from[key]
+    to[key as keyof T] = from[key]
   })
 
   return to as T & U

@@ -19,22 +19,13 @@
 <script setup lang="ts">
   import { ref, onMounted } from 'vue'
   import { CirclePlusFilled, UploadFilled } from '@element-plus/icons-vue'
-  import axios from '@nice/axios'
+  import { getUserInfo } from '~/api/user'
 
   onMounted(async () => {
     try {
-      console.dir(axios)
-      const data = await axios.post('http://localhost:3001/api/base', {
-        a: 1,
-        b: 2,
-      })
+      const data = await getUserInfo()
 
-      const data2 = await axios('http://localhost:3001/api/base', {
-        method: 'post',
-      })
-
-      console.log(data)
-      console.log(data2)
+      console.log(data.data)
     } catch (error) {
       console.dir(error)
     }
