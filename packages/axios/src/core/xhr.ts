@@ -16,7 +16,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
     } = config
     const request = new XMLHttpRequest()
 
-    request.open(method.toUpperCase(), url)
+    request.open(method.toUpperCase(), url!)
 
     // 设置 header
     Object.keys(headers).forEach((key) => {

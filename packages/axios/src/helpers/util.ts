@@ -9,12 +9,15 @@ export function isObject(val: any): val is Record<string, unknown> {
 }
 
 export function extend<T, U extends Record<string, any>>(
-  to: T,
-  from: U,
-): T & U {
-  Object.getOwnPropertyNames(from).forEach((key) => {
-    to[key as keyof T] = from[key]
+  target: T,
+  source: U,
+  ownKeys?: boolean,
+) {
+  const iterator = ownKeys ? Object.keys : Object.getOwnPropertyNames
+
+  iterator(source).forEach((key) => {
+    target[key as keyof T] = source[key]
   })
 
-  return to as T & U
+  return target as T & U
 }

@@ -21,11 +21,11 @@
   import AppHeader from './components/AppHeader/index.vue'
   import { onMounted, ref } from 'vue'
 
-  const header = ref(null)
+  // const header = ref(null)
 
-  onMounted(() => {
-    console.log(header.value)
-  })
+  // onMounted(() => {
+  //   console.log(header.value)
+  // })
 </script>
 
 <style>
