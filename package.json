@@ -7,12 +7,12 @@
     "cz": "git cz",
     "prepare": "husky install",
     "commitlint": "commitlint -e -V",
-    "web:dev": "pnpm --filter @nice/frontend dev",
-    "api:dev": "pnpm --filter @nice/backend dev",
-    "test": "pnpm --filter @nice/frontend test",
+    "web:dev": "pnpm -F @nice/frontend dev",
+    "api:dev": "pnpm -F @nice/backend dev",
+    "test": "pnpm -F @nice/frontend test",
     "lint": "pnpm lint:web",
-    "lint:web": "pnpm --filter @nice/frontend lint",
-    "lint:node": "pnpm --filter @nice/backend lint",
+    "lint:web": "pnpm -F @nice/frontend lint",
+    "lint:node": "pnpm -F @nice/backend lint",
     "lint-staged": "lint-staged"
   },
   "keywords": [],
@@ -30,11 +30,12 @@
     ]
   },
   "engines": {
-    "node": ">=16.5.0"
+    "node": ">=16.11.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.2",
     "@commitlint/config-conventional": "^17.0.2",
+    "@types/node": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "^5.28.0",
     "@typescript-eslint/parser": "^5.28.0",
     "commitizen": "^4.2.4",

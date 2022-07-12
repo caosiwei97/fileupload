@@ -1,4 +1,4 @@
-import type { AxiosRequestConfig } from '../../types'
+import type { AxiosRequestConfig } from '../types'
 import { buildURL } from '../helpers/url'
 import xhr from './xhr'
 import { transformRequest } from '../helpers/data'

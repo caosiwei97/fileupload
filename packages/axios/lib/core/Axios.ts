@@ -6,7 +6,7 @@ import {
   Method,
   RejectedFn,
   ResolvedFn,
-} from '../../types'
+} from '../types'
 import dispatchRequest from './dispatchRequest'
 import { InterceptorManager } from './InterceptorManager'
 
@@ -16,11 +16,12 @@ interface PromiseArr<T = any> {
 }
 
 export default class Axios {
-  private interceptors: {
+  interceptors: {
     request: AxiosInterceptorManager<AxiosRequestConfig>
     response: AxiosInterceptorManager<AxiosResponse>
   }
-  private defaults: AxiosRequestConfig
+
+  defaults: AxiosRequestConfig
 
   constructor(instanceConfig: AxiosRequestConfig) {
     this.interceptors = {

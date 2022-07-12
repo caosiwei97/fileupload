@@ -1,13 +1,42 @@
 {
   "name": "@nice/axios",
-  "private": true,
   "version": "1.0.0",
-  "description": "",
-  "main": "src/axios.ts",
+  "description": "nice axios",
+  "main": "dist/axios.cjs.js",
+  "module": "dist/axios.esm.js",
+  "type": "module",
+  "types": "types/lib/axios.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rimraf dist && rollup -c -m"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": [
+    "xhr",
+    "http",
+    "ajax",
+    "promise",
+    "node"
+  ],
+  "author": "cao",
+  "license": "MIT",
+  "jsdelivr": "dist/axios.umd.min.js",
+  "unpkg": "dist/axios.umd.min.js",
+  "files": [
+    "dist",
+    "types",
+    "lib",
+    "*.ts"
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.18.5",
+    "@babel/preset-env": "^7.18.2",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-commonjs": "^22.0.1",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.76.0",
+    "rollup-plugin-auto-external": "^2.0.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.32.1"
+  }
 }
