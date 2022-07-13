@@ -1,29 +1,24 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import ts from 'rollup-plugin-typescript2'
+import ts from 'rollup-plugin-typescript2' // 懒人插件，提供 TS => JS 功能并生成类型声明
 import json from '@rollup/plugin-json'
-import resolve from '@rollup/plugin-node-resolve'
-import commonjs from '@rollup/plugin-commonjs'
+import resolve from '@rollup/plugin-node-resolve' // 告诉 rollup 如何查找第三方模块
+import commonjs from '@rollup/plugin-commonjs' // 将第三方包的 cjs 转为 esm
 import { terser } from 'rollup-plugin-terser'
 import { babel } from '@rollup/plugin-babel'
 import { defineConfig } from 'rollup'
-import autoExternal from 'rollup-plugin-auto-external'
+import autoExternal from 'rollup-plugin-auto-external' // 不打包第三方依赖
 
 const lib = require('./package.json')
 const input = 'index.ts' // 通用入口
 const outputFileName = 'axios' // 输出的文件名称
 const name = 'axios' // umd 导出的全局变量名
 
-// 构建 rollup 配置
-
-// es5 - 判断是否需要用 babel 编译
-// browser - plugin-node-resolve 中的 browser
-// minified - 是否构建为压缩版本（调用 terser）
-// rollupConfig - rollup 自身配置
+// 构建 rollup 配置 
 const buildConfig = ({
-  es5 = false,
-  browser = true,
-  minified = false,
-  ...rollupConfig
+  es5 = false, // 判断是否需要用 babel 编译
+  browser = true, // plugin-node-resolve 中的 browser 配置
+  minified = false, // 是否构建为压缩版本（调用 terser）
+  ...rollupConfig // rollup 自身配置
 }) => {
   // banner
   const year = new Date().getFullYear()
@@ -42,7 +37,7 @@ const buildConfig = ({
       json(),
       resolve({ browser }),
       ts({
-        useTsconfigDeclarationDir: true,
+        useTsconfigDeclarationDir: true, // 使用 TSConfig 中的声明配置
       }),
       minified && terser(),
       ...(es5
@@ -67,7 +62,6 @@ export default async () => {
       output: {
         file: `dist/${outputFileName}.umd`,
         format: 'umd',
-        exports: 'default', // 仅导出一个东西
         name,
       },
     }),
@@ -76,7 +70,6 @@ export default async () => {
       output: {
         file: `dist/${outputFileName}.esm`,
         format: 'esm',
-        exports: 'named', // 导出很多东西
         preferConst: true, // 指定为导出生成 const 声明，而不是 var 声明
       },
     }),
@@ -85,7 +78,6 @@ export default async () => {
       output: {
         file: `dist/${outputFileName}.cjs`,
         format: 'cjs',
-        exports: 'default', // 仅导出一个东西
         preferConst: true, // 指定为导出生成 const 声明，而不是 var 声明
       },
       plugins: [autoExternal(), resolve(), commonjs()],
