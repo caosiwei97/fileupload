@@ -5,7 +5,7 @@
   "main": "dist/axios.cjs.js",
   "module": "dist/axios.esm.js",
   "type": "module",
-  "types": "types/lib/axios.d.ts",
+  "types": "types",
   "scripts": {
     "build": "rimraf dist && rollup -c -m"
   },

@@ -15,6 +15,25 @@ function extend(target, source, ownKeys) {
   })
   return target
 }
+function merge(...objs) {
+  const result = Object.create(null)
+  for (let i = 0; i < objs.length; i++) {
+    const obj = objs[i]
+    for (const key in obj) {
+      assignValue(obj[key], key)
+    }
+  }
+  function assignValue(val, key) {
+    if (isObject(result[key]) && isObject(val)) {
+      result[key] = merge(result[key], val)
+    } else if (isObject(val)) {
+      result[key] = merge({}, val)
+    } else {
+      result[key] = val
+    }
+  }
+  return result
+}
 
 function encode(val) {
   return encodeURIComponent(val)
@@ -76,23 +95,6 @@ function buildURL(url, params) {
   return url
 }
 
-function transformRequest(data) {
-  if (isObject(data)) {
-    return JSON.stringify(data)
-  }
-  return data
-}
-function transformResponse(data) {
-  if (typeof data === 'string') {
-    try {
-      data = JSON.parse(data)
-    } catch (e) {
-      // do nothing
-    }
-  }
-  return data
-}
-
 function normalizeHeaderName(headers, normalizedName) {
   Object.keys(headers).forEach((headerName) => {
     if (
@@ -106,6 +108,7 @@ function normalizeHeaderName(headers, normalizedName) {
 }
 function processHeaders(headers, data) {
   normalizeHeaderName(headers, 'Content-Type')
+  // 给带数据的请求设置默认的 Content-Type
   if (isObject(data)) {
     if (headers && !headers['Content-Type']) {
       headers['Content-Type'] = 'application/json;charset=utf-8'
@@ -125,126 +128,53 @@ function parseHeaders(headers) {
   })
   return res
 }
-
-class AxiosError extends Error {
-  config
-  request
-  code
-  response
-  constructor(message, config, request, code, response) {
-    super(message)
-    this.config = config
-    this.request = request
-    this.code = code
-    this.response = response
-    Object.setPrototypeOf(this, AxiosError.prototype)
+function flattenHeaders(headers, method) {
+  if (!headers) {
+    return headers
   }
-}
-function createError(message, config, code, request, response) {
-  return new AxiosError(message, config, code, request, response)
+  headers = merge(headers.common || {}, headers[method] || {}, headers)
+  const methodsToDelete = [
+    'delete',
+    'get',
+    'head',
+    'options',
+    'post',
+    'put',
+    'patch',
+    'common',
+  ]
+  methodsToDelete.forEach((method) => {
+    delete headers[method]
+  })
+  return headers
 }
 
-function xhr(config) {
-  return new Promise((resolve, reject) => {
-    const {
-      url,
-      method = 'get',
-      data = null,
-      headers,
-      responseType,
-      timeout,
-    } = config
-    const request = new XMLHttpRequest()
-    request.open(method.toUpperCase(), url)
-    // 设置 header
-    Object.keys(headers).forEach((key) => {
-      if (data === null && key.toLowerCase() === 'content-type') {
-        delete headers[key]
-      }
-      request.setRequestHeader(key, headers[key])
-    })
-    // 设置响应类型
-    if (responseType) {
-      request.responseType = responseType
-    }
-    if (timeout) {
-      request.timeout = timeout
-    }
-    // 发送数据
-    request.send(data)
-    // 监听事件
-    request.onreadystatechange = function handleLoad() {
-      if (request.readyState !== 4 || request.status === 0) {
-        return
-      }
-      const responseData =
-        responseType && responseType !== 'text'
-          ? request.response
-          : request.responseText
-      const response = {
-        data: transformResponse(responseData),
-        status: request.status,
-        statusText: request.statusText,
-        headers: parseHeaders(request.getAllResponseHeaders()),
-        config,
-        request,
-      }
-      handleResponse(response)
-      function handleResponse(response) {
-        if (response.status >= 200 && response.status < 300) {
-          resolve(response)
-        } else {
-          reject(
-            createError(
-              `Request failed with status code ${response.status}`,
-              config,
-              null,
-              request.status,
-              response,
-            ),
-          )
-        }
-      }
-    }
-    // 监听网络错误事件
-    request.onerror = function () {
-      reject(createError('Net Error', config, null, request))
-    }
-    // 监听超时事件
-    request.ontimeout = function () {
-      reject(
-        createError(
-          `Timeout of ${timeout} ms exceeded`,
-          config,
-          'TIMEOUT',
-          request,
-        ),
-      )
-    }
+function transform(data, headers, transformers) {
+  if (!transformers) {
+    return data
+  }
+  transformers = Array.isArray(transformers) ? transformers : [transformers]
+  transformers.forEach((transformer) => {
+    data = transformer(data, headers)
   })
+  return data
 }
 
 function axios$1(config) {
   processConfig(config)
-  return xhr(config)
+  const adapter = config.adapter
+  return adapter(config)
 }
 // 对配置进行处理
 function processConfig(config) {
   // 对 URL 进行处理
   config.url = transformURL(config)
-  // 处理请求头
-  config.headers = transformHeaders(config)
   // 处理请求数据
-  config.data = transformRequestData(config)
+  config.data = transform(config.data, config.headers, config.transformRequest)
+  config.headers = flattenHeaders(config.headers, config.method)
 }
 function transformURL({ url, params }) {
   return url && buildURL(url, params)
-}
-function transformRequestData(config) {
-  return transformRequest(config.data)
-}
-function transformHeaders({ headers = {}, data }) {
-  return processHeaders(headers, data)
 }
 
 class InterceptorManager {
@@ -261,9 +191,70 @@ class InterceptorManager {
   }
   eject(id) {
     if (this.interceptors?.[id]) {
+      // 移除拦截器，但是坑还留着
       this.interceptors[id] = null
     }
   }
+}
+
+function mergeConfig(defaultConfig, userConfig) {
+  const config = Object.create(null) // 创建空对象，作为最终的结果
+  userConfig = userConfig || {}
+  function getMergedValue(target, source) {
+    if (isObject(target) && isObject(source)) {
+      return merge(target, source)
+    } else if (isObject(source)) {
+      return merge({}, source)
+    } else if (Array.isArray(source)) {
+      return source.slice()
+    }
+    return source
+  }
+  // 策略一：只接受用户配置,不管默认配置对象里面有没有
+  function valueFromUserConfig(prop) {
+    if (userConfig?.[prop]) {
+      return getMergedValue(undefined, userConfig[prop])
+    }
+  }
+  // 策略二：用户配置了就用用户配置的，如果用户没配置，则用默认配置的
+  function defaultToUserConfig(prop) {
+    return getMergedValue(
+      undefined,
+      userConfig?.[prop] ? userConfig[prop] : defaultConfig[prop],
+    )
+  }
+  // 策略三：深度合并（比如header对象）
+  function mergeDeepProperties(prop) {
+    if (userConfig?.[prop]) {
+      return getMergedValue(defaultConfig[prop], userConfig[prop])
+    }
+    return getMergedValue(undefined, defaultConfig[prop])
+  }
+  // 策略类
+  const mergeMap = {
+    url: valueFromUserConfig,
+    method: valueFromUserConfig,
+    data: valueFromUserConfig,
+    baseURL: defaultToUserConfig,
+    transformRequest: defaultToUserConfig,
+    transformResponse: defaultToUserConfig,
+    timeout: defaultToUserConfig,
+    withCredentials: defaultToUserConfig,
+    adapter: defaultToUserConfig,
+    responseType: defaultToUserConfig,
+    headers: mergeDeepProperties,
+  }
+  // 策略分发
+  const defaultConfigKeys = Reflect.ownKeys(defaultConfig)
+  const userConfigKeys = Reflect.ownKeys(userConfig)
+  // key 去重
+  const mergeKeys = [...new Set([...defaultConfigKeys, ...userConfigKeys])]
+  mergeKeys.forEach((prop) => {
+    const strategy = mergeMap[prop]
+    const configValue = strategy(prop)
+    config[prop] = configValue
+  })
+  return config
 }
 
 class Axios {
@@ -277,13 +268,8 @@ class Axios {
     this.defaults = instanceConfig
   }
   request(url, config) {
-    if (typeof url === 'string') {
-      config = config || {}
-      config.url = url
-    } else {
-      config = url
-    }
-    config = { ...config, ...this.defaults }
+    config = this._serializeConfig(url, config)
+    // 先存放实际请求
     const arr = [
       {
         resolved: axios$1,
@@ -298,6 +284,7 @@ class Axios {
     this.interceptors.response.interceptors.forEach((interceptor) => {
       interceptor && arr.push(interceptor)
     })
+    // 实现链式调用
     let promise = Promise.resolve(config)
     while (arr.length) {
       const { resolved, rejected } = arr.shift()
@@ -343,6 +330,52 @@ class Axios {
       }),
     )
   }
+  _serializeConfig(url, config) {
+    if (typeof url === 'string') {
+      config = config || {}
+      config.url = url
+    } else {
+      config = url
+    }
+    // 策略合并
+    config = mergeConfig(this.defaults, config)
+    return config
+  }
+}
+
+function transformRequest(data) {
+  if (isObject(data)) {
+    return JSON.stringify(data)
+  }
+  return data
+}
+function transformResponse(data) {
+  if (typeof data === 'string') {
+    try {
+      data = JSON.parse(data)
+    } catch (e) {
+      // do nothing
+    }
+  }
+  return data
+}
+
+class AxiosError extends Error {
+  config
+  request
+  code
+  response
+  constructor(message, config, request, code, response) {
+    super(message)
+    this.config = config
+    this.request = request
+    this.code = code
+    this.response = response
+    Object.setPrototypeOf(this, AxiosError.prototype)
+  }
+}
+function createError(message, config, code, request, response) {
+  return new AxiosError(message, config, code, request, response)
 }
 
 function xhrAdapter(config) {
@@ -457,6 +490,19 @@ const defaults = {
       Accept: 'application/json, text/plain, */*',
     },
   },
+  // 转换请求数据（默认转换 JSON 格式数据，且只针对 put、post、patch 的请求）
+  transformRequest: [
+    function (data, headers) {
+      processHeaders(headers, data)
+      return transformRequest(data)
+    },
+  ],
+  // 转换响应数据，默认解析 JSON 数据
+  transformResponse: [
+    function (data) {
+      return transformResponse(data)
+    },
+  ],
 }
 // 不带数据的请求方法
 const methodsWithNoData = ['delete', 'get', 'head']

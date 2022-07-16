@@ -5,3 +5,4 @@ export declare function extend<T, U extends Record<string, any>>(
   source: U,
   ownKeys?: boolean,
 ): T & U
+export declare function merge(...objs: any[]): any

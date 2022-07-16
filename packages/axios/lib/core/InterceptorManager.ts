@@ -23,6 +23,7 @@ export class InterceptorManager<T> {
 
   eject(id: number) {
     if (this.interceptors?.[id]) {
+      // 移除拦截器，但是坑还留着
       this.interceptors[id] = null
     }
   }

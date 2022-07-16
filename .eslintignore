@@ -19,4 +19,5 @@ src/mock/*
 .env.*
 .prettierignore
 .stylelintrc.js
+*.d.ts
 

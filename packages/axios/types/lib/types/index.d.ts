@@ -17,7 +17,11 @@ export declare type Method =
 export interface AxiosAdapter {
   (config: AxiosRequestConfig): AxiosPromise
 }
+export interface AxiosTransformer {
+  (data: any, headers?: any): any
+}
 export interface AxiosRequestConfig {
+  baseURL?: string
   url?: string
   method?: Method
   data?: any
@@ -25,7 +29,10 @@ export interface AxiosRequestConfig {
   headers?: any
   responseType?: XMLHttpRequestResponseType
   timeout?: number
+  transformRequest?: AxiosTransformer | AxiosTransformer[]
+  transformResponse?: AxiosTransformer | AxiosTransformer[]
   adapter?: AxiosAdapter
+  withCredentials?: boolean
 }
 export interface AxiosResponse<T = any> {
   data: T
@@ -43,7 +50,7 @@ export interface AxiosError<T = any> extends Error {
   response?: AxiosResponse<T>
 }
 export interface Axios {
-  default: AxiosRequestConfig
+  defaults: AxiosRequestConfig
   interceptors: {
     request: AxiosInterceptorManager<AxiosRequestConfig>
     response: AxiosInterceptorManager<AxiosResponse>

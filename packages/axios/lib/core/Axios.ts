@@ -9,6 +9,7 @@ import {
 } from '../types'
 import dispatchRequest from './dispatchRequest'
 import { InterceptorManager } from './InterceptorManager'
+import mergeConfig from './mergeConfig'
 
 interface PromiseArr<T = any> {
   resolved: ResolvedFn<T> | ((config: AxiosRequestConfig) => AxiosPromise<T>)
@@ -32,15 +33,8 @@ export default class Axios {
   }
 
   request(url: any, config?: any): AxiosPromise {
-    if (typeof url === 'string') {
-      config = config || {}
-      config.url = url
-    } else {
-      config = url
-    }
-
-    config = { ...config, ...this.defaults }
-
+    config = this._serializeConfig(url, config)
+    // 先存放实际请求
     const arr: PromiseArr[] = [
       {
         resolved: dispatchRequest,
@@ -58,6 +52,7 @@ export default class Axios {
       interceptor && arr.push(interceptor)
     })
 
+    // 实现链式调用
     let promise = Promise.resolve(config)
 
     while (arr.length) {
@@ -96,7 +91,7 @@ export default class Axios {
     return this._requestMethodWithData('patch', url, data, config)
   }
 
-  _requestMethodWithoutData(
+  private _requestMethodWithoutData(
     method: Method,
     url: string,
     config?: AxiosRequestConfig,
@@ -109,7 +104,7 @@ export default class Axios {
     )
   }
 
-  _requestMethodWithData(
+  private _requestMethodWithData(
     method: Method,
     url: string,
     data?: any,
@@ -122,5 +117,19 @@ export default class Axios {
         data,
       }),
     )
+  }
+
+  private _serializeConfig(url: string, config?: AxiosRequestConfig) {
+    if (typeof url === 'string') {
+      config = config || {}
+      config.url = url
+    } else {
+      config = url
+    }
+
+    // 策略合并
+    config = mergeConfig(this.defaults, config)
+
+    return config
   }
 }

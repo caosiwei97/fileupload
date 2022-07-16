@@ -1,4 +1,6 @@
 import { adapters } from '../adapters'
+import { transformRequest, transformResponse } from '../helpers/data'
+import { processHeaders } from '../helpers/headers'
 import { AxiosAdapter, AxiosRequestConfig } from '../types'
 
 // 请求带数据的默认 MIME 类型
@@ -30,6 +32,19 @@ export const defaults: AxiosRequestConfig = {
       Accept: 'application/json, text/plain, */*',
     },
   },
+  // 转换请求数据（默认转换 JSON 格式数据，且只针对 put、post、patch 的请求）
+  transformRequest: [
+    function (data, headers) {
+      processHeaders(headers, data)
+      return transformRequest(data)
+    },
+  ],
+  // 转换响应数据，默认解析 JSON 数据
+  transformResponse: [
+    function (data) {
+      return transformResponse(data)
+    },
+  ],
 }
 
 // 不带数据的请求方法

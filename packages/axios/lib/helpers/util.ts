@@ -21,3 +21,25 @@ export function extend<T, U extends Record<string, any>>(
 
   return target as T & U
 }
+
+export function merge(...objs: any[]): any {
+  const result = Object.create(null)
+
+  for (let i = 0; i < objs.length; i++) {
+    const obj = objs[i]
+    for (const key in obj) {
+      assignValue(obj[key], key)
+    }
+  }
+
+  function assignValue(val: any, key: string) {
+    if (isObject(result[key]) && isObject(val)) {
+      result[key] = merge(result[key], val)
+    } else if (isObject(val)) {
+      result[key] = merge({}, val)
+    } else {
+      result[key] = val
+    }
+  }
+  return result
+}

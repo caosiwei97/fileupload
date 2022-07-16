@@ -13,7 +13,7 @@ const input = 'index.ts' // 通用入口
 const outputFileName = 'axios' // 输出的文件名称
 const name = 'axios' // umd 导出的全局变量名
 
-// 构建 rollup 配置 
+// 构建 rollup 配置
 const buildConfig = ({
   es5 = false, // 判断是否需要用 babel 编译
   browser = true, // plugin-node-resolve 中的 browser 配置
@@ -78,6 +78,7 @@ export default async () => {
       output: {
         file: `dist/${outputFileName}.cjs`,
         format: 'cjs',
+        exports: 'default',
         preferConst: true, // 指定为导出生成 const 声明，而不是 var 声明
       },
       plugins: [autoExternal(), resolve(), commonjs()],

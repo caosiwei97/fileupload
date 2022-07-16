@@ -3,7 +3,6 @@ import {
   AxiosPromise,
   AxiosRequestConfig,
   AxiosResponse,
-  Method,
 } from '../types'
 export default class Axios {
   interceptors: {
@@ -20,15 +19,7 @@ export default class Axios {
   post(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
   put(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
   patch(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
-  _requestMethodWithoutData(
-    method: Method,
-    url: string,
-    config?: AxiosRequestConfig,
-  ): AxiosPromise<any>
-  _requestMethodWithData(
-    method: Method,
-    url: string,
-    data?: any,
-    config?: AxiosRequestConfig,
-  ): AxiosPromise<any>
+  private _requestMethodWithoutData
+  private _requestMethodWithData
+  private _serializeConfig
 }

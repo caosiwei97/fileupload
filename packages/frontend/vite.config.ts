@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import viteESLint from 'vite-plugin-eslint'
 // element 按需引入组件自动导入1
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
@@ -28,7 +27,6 @@ export default defineConfig({
   },
   plugins: [
     vue(),
-    viteESLint(),
     // element-plus 自动导入组件
     AutoImport({
       resolvers: [ElementPlusResolver()],
