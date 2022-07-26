@@ -19,6 +19,60 @@
 - axios 是如何做到又可以通过函数调用，也可以通过 axios.get 这种对象方式调用的？
 - axios 是如何同时支持浏览器和 node 的？
 - axios 中的拦截器如何实现，如何保证它们的顺序？
+- 请求取消如何实现
+
+### 请求取消的视线
+
+- 利用 CancelToken.source 工厂创建取消令牌
+
+```js
+const CancelToken = axios.CancelToken
+const source = CancelToken.source()
+
+axios
+  .get('/user/12345', {
+    cancelToken: source.token,
+  })
+  .catch(function (e) {
+    if (axios.isCancel(e)) {
+      console.log('Request canceled', e.message)
+    } else {
+      // handle error
+    }
+  })
+
+axios.post(
+  '/user/12345',
+  {
+    name: 'new name',
+  },
+  {
+    cancelToken: source.token,
+  },
+)
+
+// cancel the request (the message parameter is optional)
+// 取消请求 (请求原因是可选的)
+source.cancel('Operation canceled by the user.')
+```
+
+- 通过传递取消函数给 CancelToken 构造函数取消
+
+```js
+const CancelToken = axios.CancelToken
+let cancel
+
+axios.get('/user/12345', {
+  cancelToken: new CancelToken(function executor(c) {
+    // An executor function receives a cancel function as a parameter
+    // executor函数接收一个取消函数作为参数
+    cancel = c
+  }),
+})
+
+// cancel the request
+cancel()
+```
 
 ## 如何发布一个兼容浏览器和 node 的包？
 
@@ -30,7 +84,7 @@
 
 总上可以打包成三种类型：
 
-- esm 版本：支持minified 和 未 minified，前者直接在浏览器通过 `type="module"` 使用，后者一般在使用 rollup、webpack 的项目中使用，由开发者自己打包，不编译源代码
+- esm 版本：支持 minified 和 未 minified，前者直接在浏览器通过 `type="module"` 使用，后者一般在使用 rollup、webpack 的项目中使用，由开发者自己打包，不编译源代码
 - umd 版本：支持浏览器通过 CDN 方式引入，编译源代码
 - node：打包成 cjs ，支持在 node 中引入，不编译源代码
 
